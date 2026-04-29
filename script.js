@@ -283,6 +283,10 @@ form.addEventListener('submit', async e => {
   try {
     const response = await fetch('https://ntfy.sh/ruta-33-reservations-5ZV45wU9-sF8vQ', {
       method: 'POST',
+      headers: {
+        'Title': 'Rūtas masāžas rezervācija',
+        'Tags': 'gift,heart'
+      },
       body: message
     });
     if (!response.ok) throw new Error('reservation backend failed');
