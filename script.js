@@ -15,8 +15,21 @@ const bgMusic = document.querySelector('#bgMusic');
 const musicToggle = document.querySelector('[data-music-toggle]');
 const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
+const restoreSavedReservation = () => {
+  try {
+    const saved = JSON.parse(localStorage.getItem('birthdayMassageChoice') || 'null');
+    if (!saved?.zones?.length) return;
+    reservationSubmitted = true;
+    massageSubmit.disabled = true;
+    massageSubmit.textContent = 'rezervēts 💛';
+    confirmation.innerHTML = `Rezervācija jau saglabāta: <strong>${saved.zones.join(', ')}</strong>.`;
+  } catch {
+    localStorage.removeItem('birthdayMassageChoice');
+  }
+};
+
 const focusModal = target => {
-  const focusable = target.querySelector('button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])');
+  const focusable = target.querySelector('button:not(:disabled), [href], input, textarea, select, [tabindex]:not([tabindex="-1"])');
   setTimeout(() => focusable?.focus(), 60);
 };
 const unlockScrollIfAllClosed = () => {
@@ -261,6 +274,7 @@ function updateHappyEndingVisibility() {
 }
 zoneInputs.forEach(input => input.addEventListener('change', updateHappyEndingVisibility));
 customZone.addEventListener('input', updateHappyEndingVisibility);
+restoreSavedReservation();
 
 form.addEventListener('submit', async e => {
   e.preventDefault();
