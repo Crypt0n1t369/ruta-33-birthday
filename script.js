@@ -258,7 +258,7 @@ function updateHappyEndingVisibility() {
 zoneInputs.forEach(input => input.addEventListener('change', updateHappyEndingVisibility));
 customZone.addEventListener('input', updateHappyEndingVisibility);
 
-form.addEventListener('submit', e => {
+form.addEventListener('submit', async e => {
   e.preventDefault();
   const zones = selectedZones();
   if (zones.length === 0) {
@@ -268,21 +268,32 @@ form.addEventListener('submit', e => {
   const happy = form.elements.happyEnding.checked;
   const comment = form.elements.comment.value.trim();
   const booking = { zones, happyEnding: happy, comment, reservedAt: new Date().toISOString() };
-  localStorage.setItem('birthdayMassageChoice', JSON.stringify(booking));
-  confirmation.textContent = 'Rezervēju…';
+  const message = [
+    'Sveiks, Kristap. Es rezervēju dzimšanas dienas masāžu 💛',
+    `Zonas: ${zones.join(', ')}`,
+    happy ? 'Papildu opcija: jā 😇' : 'Papildu opcija: šoreiz vēl nē',
+    comment ? `Komentārs: ${comment}` : ''
+  ].filter(Boolean).join('\n');
+  localStorage.setItem('birthdayMassageChoice', JSON.stringify({ ...booking, message }));
   burstHearts(34);
-  fetch('/api/booking', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(booking)
-  }).then(r => r.json()).then(result => {
-    confirmation.textContent = result.ok
-      ? `Mīļi iesniegts. Kristaps saņēma slepeno ziņu un jau ļoti nopietni gatavojas būt noderīgs. Izvēle: ${zones.join(', ')}. ${happy ? 'Papildu opcija arī atzīmēta 😇' : 'Papildu opcija pagaidām nav atzīmēta.'}`
-      : `${zones.join(', ')} — izvēle saglabāta šajā ierīcē, bet ziņu neizdevās nosūtīt.`;
-    if (result.ok) burstHearts(18);
-  }).catch(() => {
-    confirmation.textContent = `${zones.join(', ')} — izvēle saglabāta šajā ierīcē, bet ziņu neizdevās nosūtīt.`;
-  });
+
+  const shareUrl = `https://t.me/share/url?url=&text=${encodeURIComponent(message)}`;
+  confirmation.innerHTML = `Rezervācija sagatavota: <strong>${zones.join(', ')}</strong>. <a href="${shareUrl}" target="_blank" rel="noopener">Nosūtīt Kristapam Telegramā</a>`;
+
+  try {
+    if (navigator.share) {
+      await navigator.share({ title: 'Masāžas rezervācija Kristapam', text: message });
+      confirmation.innerHTML = `Nosūtīts / sagatavots nosūtīšanai. Kristapam jāsaņem šī izvēle: <strong>${zones.join(', ')}</strong>.`;
+      burstHearts(18);
+      return;
+    }
+    if (navigator.clipboard) {
+      await navigator.clipboard.writeText(message);
+      confirmation.innerHTML = `Rezervācija nokopēta. <a href="${shareUrl}" target="_blank" rel="noopener">Atvērt Telegram un nosūtīt Kristapam</a>`;
+    }
+  } catch {
+    confirmation.innerHTML = `Rezervācija sagatavota. <a href="${shareUrl}" target="_blank" rel="noopener">Atvērt Telegram un nosūtīt Kristapam</a>`;
+  }
 });
 
 const io = new IntersectionObserver(entries => entries.forEach(entry => {
