@@ -294,7 +294,7 @@ form.addEventListener('submit', async e => {
     comment ? `Komentārs: ${comment}` : '',
     `Laiks: ${new Date().toLocaleString('lv-LV')}`
   ].filter(Boolean).join('\n');
-  localStorage.setItem('birthdayMassageChoice', JSON.stringify({ ...booking, message }));
+  const persistReservation = () => localStorage.setItem('birthdayMassageChoice', JSON.stringify({ ...booking, message }));
   reservationSending = true;
   massageSubmit.disabled = true;
   massageSubmit.textContent = 'sūtu…';
@@ -310,6 +310,7 @@ form.addEventListener('submit', async e => {
     });
     if (!response.ok) throw new Error('reservation backend failed');
     reservationSubmitted = true;
+    persistReservation();
     confirmation.innerHTML = `Rezervācija saglabāta un nosūtīta Kristapam: <strong>${zones.join(', ')}</strong>.`;
     burstHearts(18);
   } catch {
@@ -323,10 +324,11 @@ form.addEventListener('submit', async e => {
     }
     if (beaconSent) {
       reservationSubmitted = true;
+      persistReservation();
       confirmation.innerHTML = `Rezervācija nosūtīta rezerves režīmā: <strong>${zones.join(', ')}</strong>.`;
       burstHearts(12);
     } else {
-      confirmation.innerHTML = `Rezervācija saglabāta šajā ierīcē, bet automātiskā nosūtīšana nenostrādāja. <a href="${shareUrl}" target="_blank" rel="noopener">Nosūtīt Kristapam Telegramā</a>`;
+      confirmation.innerHTML = `Automātiskā nosūtīšana nenostrādāja. Izvēle vēl nav atzīmēta kā nosūtīta — <a href="${shareUrl}" target="_blank" rel="noopener">nosūtīt Kristapam Telegramā</a>.`;
     }
   } finally {
     reservationSending = false;
