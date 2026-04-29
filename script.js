@@ -269,30 +269,27 @@ form.addEventListener('submit', async e => {
   const comment = form.elements.comment.value.trim();
   const booking = { zones, happyEnding: happy, comment, reservedAt: new Date().toISOString() };
   const message = [
-    'Sveiks, Kristap. Es rezervēju dzimšanas dienas masāžu 💛',
+    'Rūta rezervēja dzimšanas dienas masāžu 💛',
     `Zonas: ${zones.join(', ')}`,
     happy ? 'Papildu opcija: jā 😇' : 'Papildu opcija: šoreiz vēl nē',
-    comment ? `Komentārs: ${comment}` : ''
+    comment ? `Komentārs: ${comment}` : '',
+    `Laiks: ${new Date().toLocaleString('lv-LV')}`
   ].filter(Boolean).join('\n');
   localStorage.setItem('birthdayMassageChoice', JSON.stringify({ ...booking, message }));
+  confirmation.textContent = 'Saglabāju rezervāciju…';
   burstHearts(34);
 
   const shareUrl = `https://t.me/share/url?url=&text=${encodeURIComponent(message)}`;
-  confirmation.innerHTML = `Rezervācija sagatavota: <strong>${zones.join(', ')}</strong>. <a href="${shareUrl}" target="_blank" rel="noopener">Nosūtīt Kristapam Telegramā</a>`;
-
   try {
-    if (navigator.share) {
-      await navigator.share({ title: 'Masāžas rezervācija Kristapam', text: message });
-      confirmation.innerHTML = `Nosūtīts / sagatavots nosūtīšanai. Kristapam jāsaņem šī izvēle: <strong>${zones.join(', ')}</strong>.`;
-      burstHearts(18);
-      return;
-    }
-    if (navigator.clipboard) {
-      await navigator.clipboard.writeText(message);
-      confirmation.innerHTML = `Rezervācija nokopēta. <a href="${shareUrl}" target="_blank" rel="noopener">Atvērt Telegram un nosūtīt Kristapam</a>`;
-    }
+    const response = await fetch('https://ntfy.sh/ruta-33-reservations-5ZV45wU9-sF8vQ', {
+      method: 'POST',
+      body: message
+    });
+    if (!response.ok) throw new Error('reservation backend failed');
+    confirmation.innerHTML = `Rezervācija saglabāta un nosūtīta Kristapam: <strong>${zones.join(', ')}</strong>.`;
+    burstHearts(18);
   } catch {
-    confirmation.innerHTML = `Rezervācija sagatavota. <a href="${shareUrl}" target="_blank" rel="noopener">Atvērt Telegram un nosūtīt Kristapam</a>`;
+    confirmation.innerHTML = `Rezervācija saglabāta šajā ierīcē, bet automātiskā nosūtīšana nenostrādāja. <a href="${shareUrl}" target="_blank" rel="noopener">Nosūtīt Kristapam Telegramā</a>`;
   }
 });
 
