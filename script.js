@@ -13,6 +13,7 @@ const customZone = form.querySelector('textarea[name="customZone"]');
 const zoneInputs = [...form.querySelectorAll('input[name="zones"]')];
 const bgMusic = document.querySelector('#bgMusic');
 const musicToggle = document.querySelector('[data-music-toggle]');
+const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
 const focusModal = target => {
   const focusable = target.querySelector('button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])');
@@ -326,6 +327,7 @@ const io = new IntersectionObserver(entries => entries.forEach(entry => {
 document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
 function confettiBurst(count = 70) {
+  if (prefersReducedMotion) return;
   for (let i = 0; i < count; i++) {
     const c = document.createElement('span');
     c.textContent = ['✦', '♡', '•', '❦', '✧'][Math.floor(Math.random() * 5)];
@@ -345,6 +347,7 @@ function confettiBurst(count = 70) {
 }
 
 function burstHearts(count = 24) {
+  if (prefersReducedMotion) return;
   for (let i = 0; i < count; i++) {
     const h = document.createElement('span');
     h.textContent = ['♡', '✦', '❦', '☾'][Math.floor(Math.random() * 4)];
