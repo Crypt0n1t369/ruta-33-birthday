@@ -5,6 +5,8 @@ const passwordForm = document.querySelector('#passwordForm');
 const passwordConfirmation = document.querySelector('#passwordConfirmation');
 const form = document.querySelector('#massageForm');
 const confirmation = document.querySelector('#confirmation');
+const massageSubmit = form.querySelector('button[type="submit"]');
+let reservationSending = false;
 const happyAddon = document.querySelector('#happyAddon');
 const customZone = form.querySelector('textarea[name="customZone"]');
 const zoneInputs = [...form.querySelectorAll('input[name="zones"]')];
@@ -260,6 +262,7 @@ customZone.addEventListener('input', updateHappyEndingVisibility);
 
 form.addEventListener('submit', async e => {
   e.preventDefault();
+  if (reservationSending) return;
   const zones = selectedZones();
   if (zones.length === 0) {
     confirmation.textContent = 'Vispirms izvēlies vismaz vienu masāžas zonu.';
@@ -276,6 +279,9 @@ form.addEventListener('submit', async e => {
     `Laiks: ${new Date().toLocaleString('lv-LV')}`
   ].filter(Boolean).join('\n');
   localStorage.setItem('birthdayMassageChoice', JSON.stringify({ ...booking, message }));
+  reservationSending = true;
+  massageSubmit.disabled = true;
+  massageSubmit.textContent = 'sūtu…';
   confirmation.textContent = 'Saglabāju rezervāciju…';
   burstHearts(34);
 
@@ -304,6 +310,10 @@ form.addEventListener('submit', async e => {
     } else {
       confirmation.innerHTML = `Rezervācija saglabāta šajā ierīcē, bet automātiskā nosūtīšana nenostrādāja. <a href="${shareUrl}" target="_blank" rel="noopener">Nosūtīt Kristapam Telegramā</a>`;
     }
+  } finally {
+    reservationSending = false;
+    massageSubmit.disabled = false;
+    massageSubmit.textContent = 'rezervēt';
   }
 });
 
