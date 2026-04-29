@@ -256,7 +256,7 @@
     <p>Ar mīlestību. No Kristapa Rūtai — 33.</p>
   </footer>
 
-  <div class="modal" id="passwordModal" role="dialog" aria-modal="true" aria-labelledby="passwordTitle" aria-hidden="true">
+  <div class="modal" id="passwordModal" role="dialog" aria-modal="true" aria-labelledby="passwordTitle" aria-describedby="passwordHelp" aria-hidden="true">
     <div class="modal-backdrop" data-close-password></div>
     <form class="modal-card password-card" id="passwordForm">
       <button class="x" type="button" data-close-password aria-label="Aizvērt">×</button>
@@ -268,7 +268,7 @@
     </form>
   </div>
 
-  <div class="modal" id="couponModal" role="dialog" aria-modal="true" aria-labelledby="couponTitle" aria-hidden="true">
+  <div class="modal" id="couponModal" role="dialog" aria-modal="true" aria-labelledby="couponTitle" aria-describedby="couponHelp" aria-hidden="true">
     <div class="modal-backdrop" data-close-coupon></div>
     <div class="modal-card coupon-card">
       <button class="x" type="button" data-close-coupon aria-label="Aizvērt">×</button>
@@ -280,13 +280,13 @@
     </div>
   </div>
 
-  <div class="modal" id="massageModal" role="dialog" aria-modal="true" aria-labelledby="massageTitle" aria-hidden="true">
+  <div class="modal" id="massageModal" role="dialog" aria-modal="true" aria-labelledby="massageTitle" aria-describedby="massageHelp" aria-hidden="true">
     <div class="modal-backdrop" data-close-massage></div>
     <form class="modal-card" id="massageForm">
       <button class="x" type="button" data-close-massage aria-label="Aizvērt">×</button>
       <p class="eyebrow">dzimšanas dienas dāvanas pieraksts</p>
       <h2 id="massageTitle">Kur šodien vajag maigumu?</h2>
-      <p class="mini">Izvēlies vienu vai vairākas zonas. Kad izvēle būs veikta, parādīsies papildu opcija.</p>
+      <p class="mini" id="massageHelp">Izvēlies vienu vai vairākas zonas. Kad izvēle būs veikta, parādīsies papildu opcija.</p>
       <div class="options multi" aria-label="Masāžas zonas">
         <label><input type="checkbox" name="zones" value="galvai"><span>Galvai</span></label>
         <label><input type="checkbox" name="zones" value="pēdām"><span>Pēdām</span></label>
@@ -306,6 +306,6 @@
     </form>
   </div>
 
-  <script src="script.js?v=20260429-reservation-save-8"></script>
+  <script src="script.js?v=20260429-reservation-save-9"></script>
 </body>
 </html>

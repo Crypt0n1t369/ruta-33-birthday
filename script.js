@@ -101,6 +101,22 @@ document.addEventListener('keydown', e => {
     closeModal();
     closePasswordModal();
     closeCouponModal();
+    return;
+  }
+  if (e.key !== 'Tab') return;
+  const activeModal = [modal, passwordModal, couponModal].find(item => item.getAttribute('aria-hidden') === 'false');
+  if (!activeModal) return;
+  const focusable = [...activeModal.querySelectorAll('button:not(:disabled), [href], input:not(:disabled), textarea:not(:disabled), select:not(:disabled), [tabindex]:not([tabindex="-1"])')]
+    .filter(el => el.offsetParent !== null);
+  if (!focusable.length) return;
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  if (e.shiftKey && document.activeElement === first) {
+    e.preventDefault();
+    last.focus();
+  } else if (!e.shiftKey && document.activeElement === last) {
+    e.preventDefault();
+    first.focus();
   }
 });
 
