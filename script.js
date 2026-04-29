@@ -7,6 +7,7 @@ const form = document.querySelector('#massageForm');
 const confirmation = document.querySelector('#confirmation');
 const massageSubmit = form.querySelector('button[type="submit"]');
 let reservationSending = false;
+let reservationSubmitted = false;
 const happyAddon = document.querySelector('#happyAddon');
 const customZone = form.querySelector('textarea[name="customZone"]');
 const zoneInputs = [...form.querySelectorAll('input[name="zones"]')];
@@ -262,7 +263,7 @@ customZone.addEventListener('input', updateHappyEndingVisibility);
 
 form.addEventListener('submit', async e => {
   e.preventDefault();
-  if (reservationSending) return;
+  if (reservationSending || reservationSubmitted) return;
   const zones = selectedZones();
   if (zones.length === 0) {
     confirmation.textContent = 'Vispirms izvēlies vismaz vienu masāžas zonu.';
@@ -293,6 +294,7 @@ form.addEventListener('submit', async e => {
       body: message
     });
     if (!response.ok) throw new Error('reservation backend failed');
+    reservationSubmitted = true;
     confirmation.innerHTML = `Rezervācija saglabāta un nosūtīta Kristapam: <strong>${zones.join(', ')}</strong>.`;
     burstHearts(18);
   } catch {
@@ -305,6 +307,7 @@ form.addEventListener('submit', async e => {
       beaconSent = false;
     }
     if (beaconSent) {
+      reservationSubmitted = true;
       confirmation.innerHTML = `Rezervācija nosūtīta rezerves režīmā: <strong>${zones.join(', ')}</strong>.`;
       burstHearts(12);
     } else {
@@ -312,8 +315,8 @@ form.addEventListener('submit', async e => {
     }
   } finally {
     reservationSending = false;
-    massageSubmit.disabled = false;
-    massageSubmit.textContent = 'rezervēt';
+    massageSubmit.disabled = reservationSubmitted;
+    massageSubmit.textContent = reservationSubmitted ? 'rezervēts 💛' : 'rezervēt';
   }
 });
 
