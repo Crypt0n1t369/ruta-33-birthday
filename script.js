@@ -283,17 +283,27 @@ form.addEventListener('submit', async e => {
   try {
     const response = await fetch('https://ntfy.sh/ruta-33-reservations-5ZV45wU9-sF8vQ', {
       method: 'POST',
-      headers: {
-        'Title': 'Rūtas masāžas rezervācija',
-        'Tags': 'gift,heart'
-      },
+      headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
       body: message
     });
     if (!response.ok) throw new Error('reservation backend failed');
     confirmation.innerHTML = `Rezervācija saglabāta un nosūtīta Kristapam: <strong>${zones.join(', ')}</strong>.`;
     burstHearts(18);
   } catch {
-    confirmation.innerHTML = `Rezervācija saglabāta šajā ierīcē, bet automātiskā nosūtīšana nenostrādāja. <a href="${shareUrl}" target="_blank" rel="noopener">Nosūtīt Kristapam Telegramā</a>`;
+    let beaconSent = false;
+    try {
+      if (navigator.sendBeacon) {
+        beaconSent = navigator.sendBeacon('https://ntfy.sh/ruta-33-reservations-5ZV45wU9-sF8vQ', new Blob([message], { type: 'text/plain;charset=UTF-8' }));
+      }
+    } catch {
+      beaconSent = false;
+    }
+    if (beaconSent) {
+      confirmation.innerHTML = `Rezervācija nosūtīta rezerves režīmā: <strong>${zones.join(', ')}</strong>.`;
+      burstHearts(12);
+    } else {
+      confirmation.innerHTML = `Rezervācija saglabāta šajā ierīcē, bet automātiskā nosūtīšana nenostrādāja. <a href="${shareUrl}" target="_blank" rel="noopener">Nosūtīt Kristapam Telegramā</a>`;
+    }
   }
 });
 
